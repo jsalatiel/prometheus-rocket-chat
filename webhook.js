@@ -60,7 +60,7 @@ class Script {
 
   getAlertStatus(alert, status) {
     if (status === "firing" && !!alert.labels.severity) {
-      return status + "|" + alert.labels.severity;
+      return alert.labels.severity;
     } else {
       return String(status);
     }
