@@ -27,7 +27,7 @@ class Script {
         color: alertColor,
         title_link: content.externalURL,
         title: this.getAlertTitle(alert, content.status),
-        text: alert.annotations.message
+        text: "[ ns: " + alert.labels.namespace  + " ] \n"+ alert.annotations.message
       });
     }
     return attachments;
@@ -48,14 +48,19 @@ class Script {
     if (!!alert.annotations.summary) {
       title += alert.annotations.summary;
     } else if (!!alert.labels.alertname) {
-      title += alert.labels.alertname + ": " + alert.labels.instance;
+      title += alert.labels.alertname;
+      title += " ";
+      title += alert.labels.job;
+    } else if (!!alert.labels.instance) {
+      title += ": ";
+      title +=  alert.labels.instance;
     }
     return title;
   }
 
   getAlertStatus(alert, status) {
-    if (status === "firing" && !!alert.annotations.severity) {
-      return alert.annotations.severity;
+    if (status === "firing" && !!alert.labels.severity) {
+      return status + "|" + alert.labels.severity;
     } else {
       return String(status);
     }
