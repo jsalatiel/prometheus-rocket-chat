@@ -27,7 +27,7 @@ class Script {
         color: alertColor,
         title_link: content.externalURL,
         title: this.getAlertTitle(alert, content.status),
-        text: alert.annotations.description
+        text: alert.annotations.message
       });
     }
     return attachments;
