@@ -4,7 +4,7 @@
  */
 class Script {
   process_incoming_request({ request }) {
-    console.log(request.content);
+    //console.log(request.content);
 
     // Return a rocket.chat message object.
     // If channel is undefined, the default channel from the webhook configuration is used
@@ -25,9 +25,10 @@ class Script {
 
       attachments.push({
         color: alertColor,
+        collapsed: true,
         title_link: content.externalURL,
         title: this.getAlertTitle(alert, content.status),
-        text: "[ ns: " + alert.labels.namespace  + " ] \n"+ alert.annotations.message
+        text: this.getAlertText(alert)
       });
     }
     return attachments;
@@ -43,18 +44,35 @@ class Script {
     }
   }
 
+  getAlertText(alert) {
+    let msg = "[";
+    if (!!alert.labels.namespace) {
+        msg = msg + alert.labels.namespace + "/";
+    }
+    if (!!alert.labels.job) {
+      msg= msg + alert.labels.job;
+    }
+    msg +=  "] "
+
+    if (msg == "[] ")
+      msg=""
+
+    if (!!alert.labels.instance) {
+      msg = msg + "instance: " + alert.labels.instance + "<br>";
+    }
+    if (!!alert.annotations.message) {
+      msg= msg + alert.annotations.message;
+    }
+    return msg;
+  }
+
   getAlertTitle(alert, status) {
     let title = "[" + this.getAlertStatus(alert, status).toUpperCase() + "] ";
     if (!!alert.annotations.summary) {
       title += alert.annotations.summary;
     } else if (!!alert.labels.alertname) {
       title += alert.labels.alertname;
-      title += " ";
-      title += alert.labels.job;
-    } else if (!!alert.labels.instance) {
-      title += ": ";
-      title +=  alert.labels.instance;
-    }
+    } 
     return title;
   }
 
