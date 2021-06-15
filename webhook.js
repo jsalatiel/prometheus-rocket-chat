@@ -25,7 +25,7 @@ class Script {
 
       attachments.push({
         color: alertColor,
-        collapsed: true,
+        collapsed: false,
         title_link: content.externalURL,
         title: this.getAlertTitle(alert, content.status),
         text: this.getAlertText(alert)
@@ -57,11 +57,16 @@ class Script {
     if (msg == "[] ")
       msg=""
 
-    if (!!alert.labels.instance) {
+    if (!!alert.labels.node) {
+      msg = msg + "node: " + alert.labels.node + "<br>";
+    } else if (!!alert.labels.instance) {
       msg = msg + "instance: " + alert.labels.instance + "<br>";
     }
     if (!!alert.annotations.message) {
-      msg= msg + alert.annotations.message;
+      msg = msg + alert.annotations.message+ "<br>";
+    }
+    if (!!alert.annotations.description) {
+      msg = msg + alert.annotations.description+ "<br>";
     }
     return msg;
   }
