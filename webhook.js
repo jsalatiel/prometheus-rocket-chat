@@ -11,8 +11,8 @@ class Script {
     return {
       content: {
         username: "Prometheus Alert",
-        emoji: this.getAlertEmoji(request.content.status),
         attachments: this.getAlerts(request.content),
+        emoji: this.getAlertEmoji(request.content.status),
         channel: request.content.alerts[0].labels.rocketchat_channel
       }
     };
@@ -21,15 +21,19 @@ class Script {
   getAlerts(content) {
     let alertColor = this.getAlertColor(content.status);
     let attachments = [];
-    for (i = 0; i < content.alerts.length; i++) {
-      let alert = content.alerts[i];
-      attachments.push({
-        color: alertColor,
-        collapsed: false,
-        title_link: content.externalURL,
-        title: this.getAlertTitle(alert, content.status),
-        text: this.getAlertText(alert)
-      });
+    try {
+        for (i = 0; i < content.alerts.length; i++) {
+          let alert = content.alerts[i];
+          attachments.push({
+            color: alertColor,
+            collapsed: false,
+            title_link: content.externalURL,
+            title: this.getAlertTitle(alert, content.status),
+            text: this.getAlertText(alert)
+          });
+        }
+    } catch (err) {
+        console.error("Error parsing attachments");
     }
     return attachments;
   }
@@ -100,3 +104,4 @@ class Script {
   }
 
 }
+
