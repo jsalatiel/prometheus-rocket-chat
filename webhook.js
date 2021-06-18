@@ -4,13 +4,14 @@
  */
 class Script {
   process_incoming_request({ request }) {
-    //console.log(request.content);
+    console.log(request.content);
 
     // Return a rocket.chat message object.
     // If channel is undefined, the default channel from the webhook configuration is used
     return {
       content: {
         username: "Prometheus Alert",
+        emoji: this.getAlertEmoji(request.content.status),
         attachments: this.getAlerts(request.content),
         channel: request.content.alerts[0].labels.rocketchat_channel
       }
@@ -22,7 +23,6 @@ class Script {
     let attachments = [];
     for (i = 0; i < content.alerts.length; i++) {
       let alert = content.alerts[i];
-
       attachments.push({
         color: alertColor,
         collapsed: false,
@@ -36,11 +36,21 @@ class Script {
 
   getAlertColor(status) {
     if (status === "resolved") {
-      return "good";
+      return "#00FF00";
     } else if (status === "firing") {
-      return "danger";
+      return "#FF0000";
     } else {
-      return "warning";
+      return "#FFFF00";
+    }
+  }
+
+  getAlertEmoji(status) {
+    if (status === "resolved") {
+      return ":white_check_mark:";
+    } else if (status === "firing") {
+      return ":scream:";
+    } else {
+      return ":thinking:";
     }
   }
 
